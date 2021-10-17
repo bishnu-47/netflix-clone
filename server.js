@@ -6,9 +6,16 @@ import express from "express";
 import colors from "colors";
 
 import connectDB from "./config/db.js";
+import authRoute from "./routes/auth.js";
 
 const app = express();
 connectDB();
+
+//middlewares
+app.use(express.json());
+
+//routes
+app.use("/api/auth", authRoute);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "/client/build")));

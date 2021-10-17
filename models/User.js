@@ -20,6 +20,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please provide a password"],
       minlength: 6,
+      select: false,
     },
     profilePic: {
       type: String,
