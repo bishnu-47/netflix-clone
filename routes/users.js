@@ -97,9 +97,13 @@ router.get("/", verifyToken, async (req, res) => {
 // @route GET /api/users/stats
 router.get("/stats", verifyToken, async (req, res) => {
   if (req.user.isAdmin) {
+    const date = new Date();
+    date.setFullYear(date.getFullYear() - 1);
+
     try {
-      // get number of users created each month
+      // get number of users created each month(only for prev 1yr)
       const data = await User.aggregate([
+        { $match: { createdAt: { $gt: date } } },
         {
           $project: {
             month: { $month: "$createdAt" },

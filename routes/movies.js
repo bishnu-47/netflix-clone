@@ -136,4 +136,24 @@ router.get("/featured", verifyToken, async (req, res) => {
   }
 });
 
+// @desc get all Movie
+// @route GET /api/movies
+router.get("/", verifyToken, async (req, res) => {
+  try {
+    const movies = await Movie.find().sort({ createdAt: -1 });
+
+    if (!movies)
+      res.status(404).json({ success: false, data: "Movies not found!" });
+
+    res.status(200).json({
+      success: true,
+      data: movies,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      data: err.message,
+    });
+  }
+});
 export default router;
