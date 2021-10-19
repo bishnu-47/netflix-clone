@@ -59,14 +59,13 @@ router.delete("/:id", verifyToken, async (req, res) => {
 });
 
 // @desc GET user
-// @route GET /api/users/:id
-router.get("/:id", verifyToken, async (req, res) => {
+// @route GET /api/users/find/:id
+router.get("/find/:id", verifyToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    // "password:0" skips the password while fetching from DB
+    const user = await User.findById(req.user.id, { password: 0 });
 
-    // seperate password from response
-    const { password, ...info } = user._doc;
-    res.status(200).json({ success: true, data: info });
+    res.status(200).json({ success: true, data: user });
   } catch (err) {
     res.status(500).json({ success: false, data: err.message });
   }
@@ -98,10 +97,8 @@ router.get("/", verifyToken, async (req, res) => {
 // @route GET /api/users/stats
 router.get("/stats", verifyToken, async (req, res) => {
   if (req.user.isAdmin) {
-    const today = new Date();
-    const lastYear = today.setFullYear(today.setFullYear() - 1);
-
     try {
+      // get number of users created each month
       const data = await User.aggregate([
         {
           $project: {
